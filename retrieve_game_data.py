@@ -43,6 +43,12 @@ CREATE TABLE "Game" (
 	FOREIGN KEY("developer") REFERENCES "Company"("id"),
 	FOREIGN KEY("genre") REFERENCES "Genre"("id")
 );
+                  
+CREATE TABLE "Version" (
+	"game_id"	INTEGER NOT NULL,
+	"platform_id"	INTEGER NOT NULL
+    PRIMARY KEY ("game_id", "platform_id")
+);
 ''')
 
 fname = input('Enter file name:')
