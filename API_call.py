@@ -24,7 +24,7 @@ try:
     # Parse data bằng JSON, nhận về 1 Python list chứa multiple dict (vì freetogame trả ra file JSON dạng array)
     js = json.loads(data)
     # Print ra JSON bản beautified, lề = 4 spaces
-    print(json.dumps(js, indent=4))
+    # print(json.dumps(js, indent=4))
     # print(type(js))
 except:
     js = None

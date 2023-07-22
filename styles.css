@@ -1,0 +1,24 @@
+/* styles.css */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 5px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+th, tr {
+    background-color: #FFFFFF;
+}
+
+html { 
+    background: url(https://wallpaperaccess.com/full/910880.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
