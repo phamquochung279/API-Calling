@@ -1,13 +1,13 @@
 import sqlite3
 from API_call import js
+# import json
 
 # Connect đến DB, nếu chưa có DB nào tên như này thì sẽ create
 conn = sqlite3.connect('game_DB.sqlite')
-# #Cursor - Na ná như file handle nhưng mà cho DB. File handle cho ta read/write/append file tùy ý, còn cursor cho ta gửi commands nhận responses từ DB.
+# Cursor - Na ná như file handle nhưng mà cho DB. File handle cho ta read/write/append file tùy ý, còn cursor cho ta gửi commands nhận responses từ DB.
 cur = conn.cursor()
 
-# DROP hết 5 tables nếu muốn restart việc insert data vào DB 
-
+# DROP hết 5 tables nếu muốn restart việc insert data vào DB mỗi lần run script
 # cur.executescript('''
             
 # DROP TABLE IF EXISTS Genre;
@@ -18,7 +18,7 @@ cur = conn.cursor()
 
 # ''')
 
-# Thêm IF NOT EXISTS để không phải tạo lại existing table.
+# Thêm IF NOT EXISTS để không phải tạo lại existing tables.
 cur.executescript('''
             
 CREATE TABLE IF NOT EXISTS "Genre" (
@@ -37,16 +37,17 @@ CREATE TABLE IF NOT EXISTS "Company" (
 );
             
 CREATE TABLE IF NOT EXISTS "Game" (
-	"id"	INTEGER NOT NULL PRIMARY KEY UNIQUE,
-	"title"	TEXT,
-	"description"	TEXT,
-	"publisher"	INTEGER,
-	"developer"	INTEGER,
-	"genre"	INTEGER,
-	"release_date"	TEXT,
-	FOREIGN KEY("publisher") REFERENCES "Company"("id") ON DELETE SET NULL,
-	FOREIGN KEY("developer") REFERENCES "Company"("id") ON DELETE SET NULL,
-	FOREIGN KEY("genre") REFERENCES "Genre"("id")
+    "id" INTEGER NOT NULL PRIMARY KEY UNIQUE,
+    "title" TEXT,
+    "description" TEXT,
+    "publisher" INTEGER,
+    "developer" INTEGER,
+    "genre" INTEGER,
+    "release_date" TEXT,
+    FOREIGN KEY("publisher") REFERENCES "Company"("id") ON DELETE SET NULL,
+    FOREIGN KEY("developer") REFERENCES "Company"("id") ON DELETE SET NULL,
+    FOREIGN KEY("genre") REFERENCES "Genre"("id") ON DELETE SET NULL,
+    UNIQUE("title", "publisher", "developer", "release_date")
 );
                   
 CREATE TABLE IF NOT EXISTS "Version" (
@@ -57,11 +58,18 @@ CREATE TABLE IF NOT EXISTS "Version" (
 	PRIMARY KEY("game_id","platform_id")
 )
 ''')
+
 # Chạy 4 dòng dưới nếu có vấn đề connection khi call API:
 # fname = input('Enter file name:')
 # if (len(fname) < 1): fname = 'games.json'
 # fh = open(fname)
 # js = json.load(fh)
+
+def plat_mod(a):
+    a = a.split(",")
+    for b in a:
+        a[a.index(b)] = b.strip()
+    return a
 
 for line in js:
     try:
@@ -102,30 +110,18 @@ for line in js:
     cur.execute('SELECT id FROM Game WHERE title = ? ', ( title, ) )
     game_id = cur.fetchone()[0] # Lấy game_id để nhét vào bảng Version
     
-    # Check xem line ta đang loop qua có mấy platform
-    split_platforms = all_platforms.split(",")
-    no_of_platform = len(split_platforms)
-
-    # Nếu nhiều hơn 1 platform -> chạy for loop qua từng platform, nhét từng cặp platform & game vào bảng Version.
-    if no_of_platform > 1:
-        for raw_platform in split_platforms:
-            platform = raw_platform.strip()
-            cur.execute('''INSERT OR IGNORE INTO Platform (platform) VALUES ( ? )''', ( platform, ) )
-            cur.execute('SELECT id FROM Platform WHERE platform = ? ', ( platform, ) )
-            platform_id = cur.fetchone()[0] # Lấy platform_id để nhét vào bảng Version
-            cur.execute('''INSERT OR IGNORE INTO Version (game_id, platform_id)
-            VALUES ( ?, ?)''', ( game_id, platform_id ) ) # Nhét 1 cặp game_id & platform_id vào bảng Version
-    
-    # Nếu số platform = 1 -> nhét luôn platform & game vào bảng Version.
-    elif no_of_platform == 1:
-        platform = all_platforms
-        cur.execute('''INSERT OR IGNORE INTO Platform (platform) VALUES ( ? )''', ( platform , ) )
-        cur.execute('SELECT id FROM Platform WHERE platform = ? ', ( platform , ) )
+    # Biến all_platforms thành 1 list các platform, nhét từng element của list cùng với game_id vào bảng Version
+    for platform in plat_mod(all_platforms):
+        cur.execute('''INSERT OR IGNORE INTO Platform (platform) VALUES ( ? )''', ( platform, ) )
+        cur.execute('SELECT id FROM Platform WHERE platform = ? ', ( platform, ) )
         platform_id = cur.fetchone()[0] # Lấy platform_id để nhét vào bảng Version
         cur.execute('''INSERT OR IGNORE INTO Version (game_id, platform_id)
-        VALUES ( ?, ?)''', ( game_id, platform_id ) )
+        VALUES ( ?, ?)''', ( game_id, platform_id ) ) # Nhét 1 cặp game_id & platform_id vào bảng Version
+    
 conn.commit()
 
 # Close cursor và connection để free resources
 cur.close()
 conn.close()
+
+# Total: 407 coms, 379 games, 15 genres, 2 platforms, 388 versions
