@@ -3,7 +3,7 @@ from API_call import js
 # import json
 
 # Connect đến DB, nếu chưa có DB nào tên như này thì sẽ create
-conn = sqlite3.connect('game_DB.sqlite')
+conn = sqlite3.connect('game.sqlite')
 # Cursor - Na ná như file handle nhưng mà cho DB. File handle cho ta read/write/append file tùy ý, còn cursor cho ta gửi commands nhận responses từ DB.
 cur = conn.cursor()
 
@@ -66,30 +66,29 @@ CREATE TABLE IF NOT EXISTS "Version" (
 # js = json.load(fh)
 
 def plat_mod(a):
-    a = a.split(",")
-    for b in a:
-        a[a.index(b)] = b.strip()
-    return a
+    plat_list = [b.strip() for b in a.split(",")]
+    return plat_list
 
 for line in js:
     try:
         title = line['title'].strip()
         description = line['short_description'].strip()
         genre = line['genre'].strip()
-        all_platforms = line['platform'].strip()
+        all_platforms = line['platform']
         publisher = line['publisher'].strip()
         developer = line['developer'].strip()
         release_date = line['release_date'].strip()
         print(title, description, genre, all_platforms, publisher, developer, release_date)
     except:
         print("Some info is missing!")
-    # Để placeholder ? rồi truyền input vào trong 1 tuple thay vì viết hẳn input trong câu SQL -> 1. Tránh SQL injection, vì DB sẽ treat input như data thay vì executable code, 2. Performance, vì DB sẽ cache.
+        break
+    # Để placeholder ? rồi truyền input vào trong 1 tuple thay vì viết hẳn input trong câu SQL -> Tránh SQL injection, vì DB sẽ treat input như data thay vì executable code.
     
     # Nhét genre vào bảng Genre
     cur.execute('''INSERT OR IGNORE INTO Genre (genre) 
         VALUES ( ? )''', ( genre, ) )
     cur.execute('SELECT id FROM Genre WHERE genre = ? ', (genre, ) ) #Query ID của genre vừa nhét ở trên
-    genre_id = cur.fetchone()[0] #.fetchone() trả record đầu của query results ra ở dạng tuple, thêm [0] để lấy key đầu tiên của tuple đó (id)
+    genre_id = cur.fetchone()[0] #.fetchone() trả record đầu của query results ra ở dạng tuple, thêm [0] để lấy key đầu tiên của tuple đó (id của genre)
     
     # Nhét tên của publishing company vào bảng Company
     cur.execute('''INSERT OR IGNORE INTO Company (company) 
@@ -118,10 +117,11 @@ for line in js:
         cur.execute('''INSERT OR IGNORE INTO Version (game_id, platform_id)
         VALUES ( ?, ?)''', ( game_id, platform_id ) ) # Nhét 1 cặp game_id & platform_id vào bảng Version
     
+print("Success, DB is filled with data!")
 conn.commit()
 
 # Close cursor và connection để free resources
 cur.close()
 conn.close()
 
-# Total: 407 coms, 379 games, 15 genres, 2 platforms, 388 versions
+# Total: 407 companies, 379 games, 15 genres, 2 platforms, 388 versions

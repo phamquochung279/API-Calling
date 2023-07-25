@@ -7,25 +7,28 @@ def query_check(a):
     for statement in banned_statements:
         if statement in a.upper():
             return True
-        else:
-            return False
+    return False
 
 while True:
-    conn = sqlite3.connect('game_DB.sqlite')
-    cursor = conn.cursor()
+    try:
+        conn = sqlite3.connect('file:game.sqlite?mode=ro', uri=True)
+        cursor = conn.cursor()
+    except:
+        print("DB doesn't exist!")
+        break
+
     query = input('Enter your SQL query:')
     # E.g. SELECT * FROM Game WHERE publisher = 6
     
     if query_check(query) is True:
         print("Bro! Don't mess with my DB.")
         continue
-    else:
-        print("Query valid, executing...")
 
+    print("Executing...")
     try:
         cursor.execute(query)
     except:
-        print("Syntax error! Do you even know SQL bro?") # E.g. SELECT abcdefgh
+        print("Invalid query! Do you even know SQL bro?") # E.g. SELECT abcdefgh
         continue
 
     # cursor.description trả ra 1 tuple các info của các cột trong query results, trong đó element đầu của tuple là tên cột.
