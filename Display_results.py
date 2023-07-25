@@ -1,6 +1,6 @@
 import sqlite3
 
-# Check xem có phải query không, hay là command phá hoại 
+# Check xem query có phải SELECT không, hay là command phá hoại 
 banned_statements = ['INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'DROP']
 
 def query_check(a):
@@ -65,7 +65,7 @@ while True:
         file.write('</table>\n')
         file.write('</body>\n</html>\n')
 
-    print(f"Done! Open {HTML_file}.html on browser to see your results.")
+    print(f"Done! Open {HTML_file}.html on a browser to see your results.")
 
     # Đóng cursor & connection để free memory resources
     cursor.close()
