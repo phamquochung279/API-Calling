@@ -10,9 +10,7 @@ After finishing the [Python for Everybody Specialization course on Coursera](htt
 
 ## Problem Statement
 
- <br />
-
-***Disclaimer:*** <br />
+TBD <br />
 
 ## Tools Used
 
@@ -46,3 +44,8 @@ After finishing the [Python for Everybody Specialization course on Coursera](htt
 Author: Pham Quoc Hung <br />
 
 <a href="mailto:pham.quochung0999@gmail.com">![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)</a> <a href="https://public.tableau.com/app/profile/hung.pham279">![Tableau](https://img.shields.io/badge/Tableau-E97627?style=for-the-badge&logo=Tableau&logoColor=white)</a> <a href="https://github.com/phamquochung279">![Github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)</a> <a href="https://www.linkedin.com/in/pham-quochung/">![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)</a>
+
+## Special thanks to:
+
+- Dr. Chuck and his program - Python for Everybody.
+- freetogame.com for their beautiful, free-to-use API.
