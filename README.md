@@ -27,7 +27,7 @@ TL;DR: This is a Python app that extracts, transforms, and loads data from freet
 
 ## How To Use
 1. Install [Python 3.11](https://www.python.org/downloads/), [DB Browser for SQLite 3.12.2](https://sqlitebrowser.org/dl/), and optionally any code editor you prefer (mine is [Visual Studio Code](https://code.visualstudio.com/)). <br />
-2. First, run [API_call.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/API_call.py) the file to extract all game data from freetogame.com API that matches your criteria.<br />
+2. First, run [API_call.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/API_call.py) to extract data from freetogame.com API that matches your criteria (optional, as this file will be executed in the following step anyway).<br />
 3. After extraction is completed, run [DB_fill.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/DB_fill.py) to create a SQLite database and insert all extracted data into it.<br />
 4. Then, run [display_results.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/Display_results.py) and enter your SQL query. If the query is valid (i.e. a SELECT statement that returns results), you will be asked to name an HTML file (either new or existing) to store your result set. Enter a name and the HTML file shall be generated.<br />
 5. Finally, open the HTML file with a browser to see your results!<br />
