@@ -1,127 +1,80 @@
 import sqlite3
 from API_call import js
+from SQL_script import script
 # import json
 
-# Connect đến DB, nếu chưa có DB nào tên như này thì sẽ create
+# Connect to an existing DB, or create a brand new DB
 conn = sqlite3.connect('game.sqlite')
-# Cursor - Na ná như file handle nhưng mà cho DB. File handle cho ta read/write/append file tùy ý, còn cursor cho ta gửi commands nhận responses từ DB.
+# Create a DB cursor to interact with the DB. A cursor to a DB is pretty similar to a file handle to a file
 cur = conn.cursor()
 
-# DROP hết 5 tables nếu muốn restart việc insert data vào DB mỗi lần run script
-# cur.executescript('''
-            
-# DROP TABLE IF EXISTS Genre;
-# DROP TABLE IF EXISTS Platform;
-# DROP TABLE IF EXISTS Company;
-# DROP TABLE IF EXISTS Game;
-# DROP TABLE IF EXISTS Version
+# Run the script to create the tables
+cur.executescript(script)
 
-# ''')
-
-# Thêm IF NOT EXISTS để không phải tạo lại existing tables.
-cur.executescript('''
-            
-CREATE TABLE IF NOT EXISTS "Genre" (
-	"id"	INTEGER NOT NULL PRIMARY KEY UNIQUE,
-	"genre"	TEXT UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS "Platform" (
-	"id"	INTEGER NOT NULL PRIMARY KEY UNIQUE,
-	"platform"	TEXT UNIQUE
-);
-            
-CREATE TABLE IF NOT EXISTS "Company" (
-	"id"	INTEGER NOT NULL PRIMARY KEY UNIQUE,
-	"company"	TEXT UNIQUE
-);
-            
-CREATE TABLE IF NOT EXISTS "Game" (
-    "id" INTEGER NOT NULL PRIMARY KEY UNIQUE,
-    "title" TEXT,
-    "description" TEXT,
-    "publisher" INTEGER,
-    "developer" INTEGER,
-    "genre" INTEGER,
-    "release_date" TEXT,
-    FOREIGN KEY("publisher") REFERENCES "Company"("id") ON DELETE SET NULL,
-    FOREIGN KEY("developer") REFERENCES "Company"("id") ON DELETE SET NULL,
-    FOREIGN KEY("genre") REFERENCES "Genre"("id") ON DELETE SET NULL,
-    UNIQUE("title", "publisher", "developer", "release_date")
-);
-                  
-CREATE TABLE IF NOT EXISTS "Version" (
-	"game_id"	INTEGER,
-	"platform_id"	INTEGER,
-	FOREIGN KEY("platform_id") REFERENCES "Platform"("id") ON DELETE SET NULL,
-	FOREIGN KEY("game_id") REFERENCES "Game"("id") ON DELETE CASCADE,
-	PRIMARY KEY("game_id","platform_id")
-)
-''')
-
-# Chạy 4 dòng dưới nếu có vấn đề connection khi call API:
+# In case you can't connect to the API, run the next 4 lines to insert data from games.json to DB instead: 
 # fname = input('Enter file name:')
-# if (len(fname) < 1): fname = 'games.json'
+# if (len(fname) < 1): fname = 'non_executable/games.json'
 # fh = open(fname)
 # js = json.load(fh)
 
-def plat_mod(a):
-    plat_list = [b.strip() for b in a.split(",")]
+# Transform retrieved Platform data into a list of platforms
+def plat_mod(platforms):
+    plat_list = [platform.strip() for platform in platforms.split(",")]
     return plat_list
 
-for line in js:
+# Extract data of each game
+for game in js:
     try:
-        title = line['title'].strip()
-        description = line['short_description'].strip()
-        genre = line['genre'].strip()
-        all_platforms = line['platform']
-        publisher = line['publisher'].strip()
-        developer = line['developer'].strip()
-        release_date = line['release_date'].strip()
+        title = game['title'].strip()
+        description = game['short_description'].strip()
+        genre = game['genre'].strip()
+        all_platforms = game['platform']
+        publisher = game['publisher'].strip()
+        developer = game['developer'].strip()
+        release_date = game['release_date'].strip()
+        # Strip whitespaces for all info, just to be sure.
         print(title, description, genre, all_platforms, publisher, developer, release_date)
     except:
         print("Some info is missing!")
         break
-    # Để placeholder ? rồi truyền input vào trong 1 tuple thay vì viết hẳn input trong câu SQL -> Tránh SQL injection, vì DB sẽ treat input như data thay vì executable code.
-    
-    # Nhét genre vào bảng Genre
+
+    # Insert extracted 'genre' to table Genre
     cur.execute('''INSERT OR IGNORE INTO Genre (genre) 
         VALUES ( ? )''', ( genre, ) )
-    cur.execute('SELECT id FROM Genre WHERE genre = ? ', (genre, ) ) #Query ID của genre vừa nhét ở trên
-    genre_id = cur.fetchone()[0] #.fetchone() trả record đầu của query results ra ở dạng tuple, thêm [0] để lấy key đầu tiên của tuple đó (id của genre)
+    cur.execute('SELECT id FROM Genre WHERE genre = ? ', (genre, ) ) # Query for genry_ID of the added 'genre'
+    genre_id = cur.fetchone()[0] # .fetchone() will output the first row of your result set in a tuple, with 'id' as its 1st element
     
-    # Nhét tên của publishing company vào bảng Company
+    # Insert extracted 'publisher' to table Company
     cur.execute('''INSERT OR IGNORE INTO Company (company) 
         VALUES ( ? )''', ( publisher, ) )
-    cur.execute('SELECT id FROM Company WHERE company = ? ', ( publisher, ) )
-    publisher_id = cur.fetchone()[0] # Lấy publisher_id để nhét vào bảng Game
+    cur.execute('SELECT id FROM Company WHERE company = ? ', ( publisher, ) ) # Repeating the process above
+    publisher_id = cur.fetchone()[0]
     
-    # Nhét tên của development company vào bảng Company
+    # Insert extracted 'developer' to table Company
     cur.execute('''INSERT OR IGNORE INTO Company (company) 
         VALUES ( ? )''', ( developer, ) )
-    cur.execute('SELECT id FROM Company WHERE company = ? ', ( developer, ) )
-    developer_id = cur.fetchone()[0] # Lấy publisher_id để nhét vào bảng Game
+    cur.execute('SELECT id FROM Company WHERE company = ? ', ( developer, ) ) # Repeating the process above
+    developer_id = cur.fetchone()[0]
 
-    # Nhét data của game (trừ platform) vào bảng Game.
+    # Insert extracted game info to table Game
     cur.execute('''INSERT OR IGNORE INTO Game
-        (title, description, publisher, developer, genre, release_date) 
+        (title, description, publisher_id, developer_id, genre_id, release_date) 
         VALUES ( ?, ?, ?, ?, ?, ?)''', ( title, description, publisher_id, developer_id, genre_id, release_date ) )
-    cur.execute('SELECT id FROM Game WHERE title = ? ', ( title, ) )
-    game_id = cur.fetchone()[0] # Lấy game_id để nhét vào bảng Version
+    cur.execute('SELECT id FROM Game WHERE title = ? ', ( title, ) ) # Repeating the process above
+    game_id = cur.fetchone()[0]
     
-    # Biến all_platforms thành 1 list các platform, nhét từng element của list cùng với game_id vào bảng Version
+    # Transforming all_platforms into a list, since some games are available on multiple platforms
     for platform in plat_mod(all_platforms):
         cur.execute('''INSERT OR IGNORE INTO Platform (platform) VALUES ( ? )''', ( platform, ) )
         cur.execute('SELECT id FROM Platform WHERE platform = ? ', ( platform, ) )
-        platform_id = cur.fetchone()[0] # Lấy platform_id để nhét vào bảng Version
+        platform_id = cur.fetchone()[0]
         cur.execute('''INSERT OR IGNORE INTO Version (game_id, platform_id)
-        VALUES ( ?, ?)''', ( game_id, platform_id ) ) # Nhét 1 cặp game_id & platform_id vào bảng Version
+        VALUES ( ?, ?)''', ( game_id, platform_id ) )
+        # Each pair of game_id and platform_id is a version of the game (e.g. PC version, Xbox version, etc.)
     
 print("Success, DB is filled with data!")
 conn.commit()
 
-# Close cursor và connection để free resources
+# Close cursor & connection to free memory resources
 cur.close()
 conn.close()
-
-# Total: 407 companies, 379 games, 15 genres, 2 platforms, 388 versions

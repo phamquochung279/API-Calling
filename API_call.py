@@ -1,21 +1,27 @@
 from urllib import request, parse
 import json
+import ssl
+
+# Ignore SSL certificate errors (if any)
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
 
 endpoint = 'https://www.freetogame.com/api/games?'
 
-# Nối API endpoint với query parameters
+# Concatenating endpoint & query parameters to create API URL
 url = endpoint + parse.urlencode({'sort-by': "alphabetical"})
 
 print('Retrieving', url)
 
-# Đi đến URL đã tạo & trả lại http.client.HTTPResponse object
+uh = request.urlopen(url, context=ctx) # Sending GET request to API & get http.client.HTTPResponse object
 
-uh = request.urlopen(url)
-data = uh.read().decode() # Read đọc http.client.HTTPResponse object & trả ra file ở dạng bytes. Decode biến bytes thành Python string (Unicode)
+data = uh.read().decode() # read() converts object into bytes, decode() converts the bytes into a Python string
+
 try:
-# Parse data bằng JSON, nhận về 1 Python list chứa multiple dict (vì freetogame trả ra JSON objects trong 1 array)
+# Parsing JSON data
     js = json.loads(data)
-# Print ra JSON bản beautified, lề = 4 spaces
+# Print beautified version of parsed data
     print(json.dumps(js, indent=4))
     print("JSON successfully retrived & parsed!")
 except:
