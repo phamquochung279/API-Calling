@@ -25,18 +25,18 @@ TL;DR: This is a Python app that extracts, transforms, and loads data from freet
 - Showcase users' query results on an HTML webpage with some simple CSS styles. <br />
 - ***Disclaimer:*** HTML and CSS are outside of Python for Everybody's scope, I just wanted to do some experiments with them. <br />
 
-## Installation
-- Install Python 3.11, DB Browser for SQLite 3.12.2, and any code editor you prefer (mine is Visual Studio Code). <br />
-- First, run [API_call.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/API_call.py) the file to extract all game data from freetogame.com API that matches your criteria.<br />
+## How To Use
+1. Install Python 3.11, DB Browser for SQLite 3.12.2, and any code editor you prefer (mine is Visual Studio Code). <br />
+2. First, run [API_call.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/API_call.py) the file to extract all game data from freetogame.com API that matches your criteria.<br />
 
 ***Note:***
-1. Add any query parameters you want to function **urllib.parse.urlencode()**'s parameters on line 7 (for more info, see freetogame.com's API doc [here](https://www.freetogame.com/api-doc)).
-2. In case you don't want blow up freetogame.com's API with repeated requests, the file [games.json](https://github.com/phamquochung279/freetogame.com-API-ETL/blob/main/non_executable/games.json) has freetogame.com's full Live games list (retrieved from endpoint [https://www.freetogame.com/api/games](https://www.freetogame.com/api/games)) as of July 24th, 2023.<br />
-- After extraction is completed, run [DB_fill.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/DB_fill.py) to create a SQLite database and insert all extracted data into it.<br />
+- Add any query parameters you want to function **urllib.parse.urlencode()**'s parameters on line 7 (for more info, see freetogame.com's API doc [here](https://www.freetogame.com/api-doc)).<br />
+- In case you don't want blow up freetogame.com's API with repeated requests, the file [games.json](https://github.com/phamquochung279/freetogame.com-API-ETL/blob/main/non_executable/games.json) has freetogame.com's full Live games list (retrieved from endpoint [https://www.freetogame.com/api/games](https://www.freetogame.com/api/games)) as of July 24th, 2023.<br />
+3. After extraction is completed, run [DB_fill.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/DB_fill.py) to create a SQLite database and insert all extracted data into it.<br />
 ***Note:*** You can change the name of the SQLite database to be created/connected to on line 6 - parameter of **sqlite3.connect()** function.<br />
-- Then, run [display_results.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/Display_results.py) and enter your SQL query. If the query is valid (i.e. a SELECT statement that returns results), you will be asked to name an HTML file (either new or existing) to store your result set. Enter a name and the HTML file shall be generated.<br />
+4. Then, run [display_results.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/Display_results.py) and enter your SQL query. If the query is valid (i.e. a SELECT statement that returns results), you will be asked to name an HTML file (either new or existing) to store your result set. Enter a name and the HTML file shall be generated.<br />
 ***Note:*** Please excuse my horrible front-end work. Feel free to customize your webpage's styles in [styles.css](https://github.com/phamquochung279/API-Data-Extraction/blob/main/styles.css)! <br />
-- Finally, open the HTML file with a browser to see your results!<br />
+5. Finally, open the HTML file with a browser to see your results!<br />
 
 ## Special thanks to:
 
