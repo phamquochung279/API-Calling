@@ -1,7 +1,7 @@
 # ETL Data from API to Database
 
 <p align="center">
-  <img src="https://d33wubrfki0l68.cloudfront.net/868dca64c9bf719cc113ee151faa2dae77be128b/71196/static/f825d8a6a4a9d7ee7ec139fbb191d661/12fd3/entity-extraction-api-thumbnail.png" alt="BikeStore" width=70%" height="400">
+  <img src="https://d33wubrfki0l68.cloudfront.net/868dca64c9bf719cc113ee151faa2dae77be128b/71196/static/f825d8a6a4a9d7ee7ec139fbb191d661/12fd3/entity-extraction-api-thumbnail.png" alt="BikeStore" width=100%" height="400">
 </p>
 
 ## Introduction
