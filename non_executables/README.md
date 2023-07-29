@@ -31,11 +31,11 @@ TL;DR: This is a Python app that extracts, transforms, and loads data from freet
 
 ***Note:***
 1. Add any query parameters you want to function **urllib.parse.urlencode()**'s parameters on line 7 (for more info, see freetogame.com's API doc [here](https://www.freetogame.com/api-doc)).
-2. In case you don't want blow up freetogame.com's API with repeated requests, the file [games.json](https://github.com/phamquochung279/API-Data-Extraction/blob/main/games.json) has freetogame.com's full Live games list (retrieved from endpoint [https://www.freetogame.com/api/games](https://www.freetogame.com/api/games)) as of July 24th, 2023.<br />
+2. In case you don't want blow up freetogame.com's API with repeated requests, the file [games.json](https://github.com/phamquochung279/freetogame.com-API-ETL/blob/main/non_executable/games.json) has freetogame.com's full Live games list (retrieved from endpoint [https://www.freetogame.com/api/games](https://www.freetogame.com/api/games)) as of July 24th, 2023.<br />
 - After extraction is completed, run [DB_fill.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/DB_fill.py) to create a SQLite database and insert all extracted data into it.<br />
 ***Note:*** You can change the name of the SQLite database to be created/connected to on line 6 - parameter of **sqlite3.connect()** function.<br />
 - Then, run [display_results.py](https://github.com/phamquochung279/API-Data-Extraction/blob/main/Display_results.py) and enter your SQL query. If the query is valid (i.e. a SELECT statement that returns results), you will be asked to name an HTML file (either new or existing) to store your result set. Enter a name and the HTML file shall be generated.<br />
-***Note:*** You can customize your webpage's styles in [styles.css](https://github.com/phamquochung279/API-Data-Extraction/blob/main/styles.css) if you will.<br />
+***Note:*** Please excuse my horrible front-end work. Feel free to customize your webpage's styles in [styles.css](https://github.com/phamquochung279/API-Data-Extraction/blob/main/styles.css)! <br />
 - Finally, open the HTML file with a browser to see your results!<br />
 
 ## Special thanks to:
